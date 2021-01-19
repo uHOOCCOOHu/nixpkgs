@@ -1,0 +1,59 @@
+diff --git a/psw/ae/aesm_service/source/core/AESMLogicWrapper.cpp b/psw/ae/aesm_service/source/core/AESMLogicWrapper.cpp
+index c255baae..291c9203 100644
+--- a/psw/ae/aesm_service/source/core/AESMLogicWrapper.cpp
++++ b/psw/ae/aesm_service/source/core/AESMLogicWrapper.cpp
+@@ -69,7 +69,7 @@ static Framework g_fw = FrameworkFactory().NewFramework();
+ #define PATH_SEPARATOR "\\"
+ #endif
+ 
+-#define BUNDLE_SUBFOLDER "bundles"
++#define BUNDLE_SUBFOLDER "../lib/bundles"
+ 
+ static std::vector<std::string> get_bundles()
+ {
+diff --git a/psw/ae/aesm_service/source/oal/linux/aesm_util.cpp b/psw/ae/aesm_service/source/oal/linux/aesm_util.cpp
+index 8816cc01..bcd1b86c 100644
+--- a/psw/ae/aesm_service/source/oal/linux/aesm_util.cpp
++++ b/psw/ae/aesm_service/source/oal/linux/aesm_util.cpp
+@@ -37,6 +37,7 @@
+ #include <unistd.h>
+ #include <errno.h>
+ #include <dlfcn.h>
++#include <stdlib.h>
+ 
+ 
+ static ae_error_t aesm_get_path(
+@@ -61,13 +62,14 @@ static ae_error_t aesm_get_path(
+         *p_last_slash = '\0';  //null terminate the string
+     }
+     else p_file_path[0] = '\0';
+-    if(strnlen(p_file_path,buf_size)+strnlen(p_file_name,buf_size)+sizeof(char)>buf_size)
++    if(strnlen(p_file_path,buf_size)+7+strnlen(p_file_name,buf_size)+sizeof(char)>buf_size)
+         return OAL_PATHNAME_BUFFER_OVERFLOW_ERROR;
++    (void)strncat(p_file_path, "../lib/", 7);
+     (void)strncat(p_file_path,p_file_name, strnlen(p_file_name,buf_size));
+     return AE_SUCCESS;
+ }
+ 
+-#define AESM_DATA_FOLDER "/var/opt/aesmd/data/"
++#define AESM_DATA_FOLDER "/var/lib/aesmd/data"
+ static ae_error_t aesm_get_data_path(
+     const char *p_file_name,
+     char *p_file_path,
+@@ -76,9 +78,14 @@ static ae_error_t aesm_get_data_path(
+     if(!p_file_name || !p_file_path)
+         return OAL_PARAMETER_ERROR;
+ 
+-    if(strlen(AESM_DATA_FOLDER)+strnlen(p_file_name,buf_size)+sizeof(char)>buf_size)
++    const char *dir = getenv("AESM_DATA_FOLDER");
++    if (dir == NULL)
++        dir = AESM_DATA_FOLDER;
++
++    if(strlen(dir)+1+strnlen(p_file_name,buf_size)+sizeof(char)>buf_size)
+         return OAL_PATHNAME_BUFFER_OVERFLOW_ERROR;
+-    (void)strcpy_s(p_file_path, buf_size, AESM_DATA_FOLDER);
++    (void)strcpy_s(p_file_path, buf_size, dir);
++    (void)strncat(p_file_path, "/", 1);
+     (void)strncat(p_file_path,p_file_name, strnlen(p_file_name,buf_size));
+     return AE_SUCCESS;
+ }

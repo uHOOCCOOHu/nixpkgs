@@ -8160,6 +8160,8 @@ in
 
   sg3_utils = callPackage ../tools/system/sg3_utils { };
 
+  inherit (callPackage ../os-specific/linux/sgx { }) sgx-sdk sgx-psw;
+
   sha1collisiondetection = callPackage ../tools/security/sha1collisiondetection { };
 
   shadowsocks-libev = callPackage ../tools/networking/shadowsocks-libev { };

@@ -1,5 +1,5 @@
 { lib, stdenv, fetchFromGitHub, fetchurl, cmake, python3, file, openssl, git, protobuf, which, curl, makeWrapper
-, sgx-sdk
+, sgx-sdk, breakpointHook
 , version, src }:
 let
   prebuilt-ae = fetchurl {
@@ -23,7 +23,8 @@ let
       tar -C $sourceRoot/external/dcap_source/QuoteGeneration -xf ${prebuilt-dcap}
     '';
     patches = [
-      ./psw-fix-aesm-service-dir-path.patch
+      ./psw-aesm-service-show-error.patch
+      ./psw-aesm-service-dir-path.patch
       ./psw-fix-getconf-path.patch
       ./psw-no-resource-mtime.patch
     ];

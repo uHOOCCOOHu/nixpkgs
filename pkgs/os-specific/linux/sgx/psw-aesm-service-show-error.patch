@@ -1,0 +1,27 @@
+diff --git a/psw/ae/aesm_service/source/common/oal/internal_log.h b/psw/ae/aesm_service/source/common/oal/internal_log.h
+index bb4550ea..8ee82ca6 100644
+--- a/psw/ae/aesm_service/source/common/oal/internal_log.h
++++ b/psw/ae/aesm_service/source/common/oal/internal_log.h
+@@ -31,6 +31,7 @@
+ 
+ #ifndef __OAL_INTERNAL_LOG_H__
+ #define __OAL_INTERNAL_LOG_H__
++#include "error_report.h"
+ #ifdef DBG_LOG
+ #include <stdint.h>
+ #define FATAL_LOG_LEVEL  0 /*report critical internal error*/
+@@ -60,10 +61,10 @@ extern "C" {
+ 
+ #define AESM_SET_DBG_LEVEL(level) aesm_set_log_level(level)
+ #else
+-#define AESM_DBG_FATAL(args...)
+-#define AESM_DBG_ERROR(args...)
+-#define AESM_DBG_WARN(args...)
+-#define AESM_DBG_INFO(args...)
++#define AESM_DBG_FATAL AESM_LOG_FATAL
++#define AESM_DBG_ERROR AESM_LOG_ERROR
++#define AESM_DBG_WARN AESM_LOG_WARN
++#define AESM_DBG_INFO AESM_LOG_INFO
+ #define AESM_DBG_DEBUG(args...)
+ #define AESM_DBG_TRACE(args...)
+ #define AESM_SET_DBG_LEVEL(level)

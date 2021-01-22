@@ -23,7 +23,7 @@ in {
 
       serviceConfig = {
         Type = "forking";
-        DynamicUser = true;
+        # DynamicUser = true;
         WorkingDirectory = dataDir;
         StateDirectory = "aesmd";
         StateDirectoryMode = "0755";
@@ -33,15 +33,15 @@ in {
         Restart = "on-failure";
         RestartSec = "15s";
 
-        ReadWritePaths = [ dataDir ];
-        ProtectHome = true;
-        DevicePolicy = "closed";
-        DeviceAllow = [
-          "/dev/isgx rw"
-          "/dev/sgx rw"
-          "/dev/sgx/enclave rw"
-          "/dev/sgx/provision rw"
-        ];
+        # ReadWritePaths = [ dataDir ];
+        # ProtectHome = true;
+        # DevicePolicy = "closed";
+        # DeviceAllow = [
+        #   "/dev/isgx rw"
+        #   "/dev/sgx rw"
+        #   "/dev/sgx/enclave rw"
+        #   "/dev/sgx/provision rw"
+        # ];
       };
     };
   };

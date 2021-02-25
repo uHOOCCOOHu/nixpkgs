@@ -51,9 +51,9 @@
 , iptables
 , withSelinux ? false
 , libselinux
-, withLibseccomp ? lib.any (lib.meta.platformMatch stdenv.hostPlatform) libseccomp.meta.platforms
+, withLibseccomp ? lib.meta.availableOnPlatform stdenv.hostPlatform libseccomp
 , libseccomp
-, withKexectools ? lib.any (lib.meta.platformMatch stdenv.hostPlatform) kexectools.meta.platforms
+, withKexectools ? lib.meta.availableOnPlatform stdenv.hostPlatform kexectools
 , kexectools
 , bashInteractive
 , libmicrohttpd

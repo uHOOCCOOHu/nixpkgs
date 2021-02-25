@@ -87,4 +87,8 @@ rec {
         then { system = elem; }
         else { parsed = elem; };
     in lib.matchAttrs pattern platform;
+
+  availableOnPlatform = platform: pkg:
+    lib.any (platformMatch platform) pkg.meta.platforms &&
+    lib.all (elem: !platformMatch platform elem) (pkg.meta.badPlatforms or []);
 }

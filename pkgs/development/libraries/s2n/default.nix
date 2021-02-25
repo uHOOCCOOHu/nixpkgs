@@ -2,14 +2,18 @@
 
 stdenv.mkDerivation rec {
   pname = "s2n";
-  version = "0.10.23";
+  version = "1.0.0";
 
   src = fetchFromGitHub {
     owner = "awslabs";
     repo = pname;
     rev = "v${version}";
-    sha256 = "063wqpszhfcbxm7a7s6d6kinqd6b6dxij85lk9jjkrslg5fgqbki";
+    hash = "sha256-sOTQvwHjcEKS3/h7mLZ2S1P0P543zS8jYbVLtPir0+A=";
   };
+
+  patches = [
+    ./support-riscv64.patch
+  ];
 
   nativeBuildInputs = [ cmake ];
 

@@ -1,0 +1,39 @@
+diff --git a/pq-crypto/sike_r2/P434_internal.h b/pq-crypto/sike_r2/P434_internal.h
+index 9b20279f..b535bb67 100644
+--- a/pq-crypto/sike_r2/P434_internal.h
++++ b/pq-crypto/sike_r2/P434_internal.h
+@@ -24,6 +24,9 @@
+ #elif (TARGET == TARGET_PPC64)
+ #define NWORDS_FIELD 7
+ #define p434_ZERO_WORDS 3
++#elif (TARGET == TARGET_RISCV64)
++#define NWORDS_FIELD 7
++#define p434_ZERO_WORDS 3
+ #endif
+ 
+ // Basic constants
+diff --git a/pq-crypto/sike_r2/config.h b/pq-crypto/sike_r2/config.h
+index dd54470e..0b81197f 100644
+--- a/pq-crypto/sike_r2/config.h
++++ b/pq-crypto/sike_r2/config.h
+@@ -41,6 +41,7 @@
+ #define TARGET_ARM 3
+ #define TARGET_ARM64 4
+ #define TARGET_PPC64 5
++#define TARGET_RISCV64 6
+ 
+ #if defined(__x86_64__)
+ #define TARGET TARGET_AMD64
+@@ -72,6 +73,12 @@ typedef uint32_t hdigit_t; // Unsigned 32-bit digit
+ #define LOG2RADIX 6
+ typedef uint64_t digit_t;  // Unsigned 64-bit digit
+ typedef uint32_t hdigit_t; // Unsigned 32-bit digit
++#elif defined(__riscv) && (__riscv_xlen == 64)
++#define TARGET TARGET_RISCV64
++#define RADIX 64
++#define LOG2RADIX 6
++typedef uint64_t digit_t;  // Unsigned 64-bit digit
++typedef uint32_t hdigit_t; // Unsigned 32-bit digit
+ #else
+ #error-- "Unsupported ARCHITECTURE"
+ #endif

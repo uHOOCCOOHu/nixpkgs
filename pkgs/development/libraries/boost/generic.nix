@@ -150,6 +150,8 @@ stdenv.mkDerivation {
     cat << EOF >> user-config.jam
     using gcc : cross : ${stdenv.cc.targetPrefix}c++ ;
     EOF
+    sed '2i export CC=$CC_FOR_BUILD; export CXX=$CXX_FOR_BUILD' \
+      -i ./tools/build/src/engine/build.sh
   '';
 
   NIX_CFLAGS_LINK = lib.optionalString stdenv.isDarwin

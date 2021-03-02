@@ -73,6 +73,9 @@ stdenv.mkDerivation rec {
   ] ++ optionals (stdenv.hostPlatform.libc == "musl") [
     "--without-bash-malloc"
     "--disable-nls"
+  # FIXME: Configure script is too old (2013) to be able to guess RiscV platform.
+  ] ++ optionals stdenv.buildPlatform.isRiscV [
+    "--build=${stdenv.buildPlatform.config}"
   ];
 
   # Note: Bison is needed because the patches above modify parse.y.

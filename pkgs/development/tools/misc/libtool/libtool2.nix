@@ -15,6 +15,9 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ perl help2man m4 ];
   propagatedBuildInputs = [ m4 ];
 
+  # FIXME: Configure script is too old (2015) to be able to guess RiscV platform.
+  configureFlags = lib.optional stdenv.buildPlatform.isRiscV "--build=${stdenv.buildPlatform.config}";
+
   # Don't fixup "#! /bin/sh" in Libtool, otherwise it will use the
   # "fixed" path in generated files!
   dontPatchShebangs = true;

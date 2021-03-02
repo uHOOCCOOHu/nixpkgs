@@ -1,5 +1,6 @@
 { lib, stdenv, fetchurl
 , enableStatic ? stdenv.hostPlatform.isStatic
+, enableThreading ? true
 }:
 
 # Note: this package is used for bootstrapping fetchurl, and thus
@@ -17,7 +18,8 @@ stdenv.mkDerivation rec {
 
   outputs = [ "bin" "dev" "out" "man" "doc" ];
 
-  configureFlags = lib.optional enableStatic "--disable-shared";
+  configureFlags = lib.optional enableStatic "--disable-shared"
+    ++ lib.optional (!enableThreading) "--enable-threads=no";
 
   doCheck = true;
 

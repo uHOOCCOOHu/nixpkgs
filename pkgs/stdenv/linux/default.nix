@@ -208,6 +208,12 @@ in
       # won't be included in the final stdenv and won't be exported to
       # top-level pkgs as an override either.
       perl = super.perl.override { enableThreading = false; };
+
+      # A threaded xz build on riscv platform needs libatomic,
+      # which is not included in bootstrapTools, so disable threading.
+      xz = if localSystem.isRiscV
+        then super.xz.override { enableThreading = false; }
+        else super.xz;
     };
   })
 
@@ -221,7 +227,7 @@ in
       inherit (prevStage)
         ccWrapperStdenv
         gcc-unwrapped coreutils gnugrep
-        perl gnum4 bison;
+        perl xz gnum4 bison;
       dejagnu = super.dejagnu.overrideAttrs (a: { doCheck = false; } );
 
       # We need libidn2 and its dependency libunistring as glibc dependency.
@@ -264,7 +270,7 @@ in
       inherit (prevStage)
         ccWrapperStdenv
         binutils coreutils gnugrep
-        perl patchelf linuxHeaders gnum4 bison libidn2 libunistring;
+        perl xz patchelf linuxHeaders gnum4 bison libidn2 libunistring;
       ${localSystem.libc} = getLibc prevStage;
       # Link GCC statically against GMP etc.  This makes sense because
       # these builds of the libraries are only used by GCC, so it
@@ -294,7 +300,7 @@ in
       # because gcc (since JAR support) already depends on zlib, and
       # then if we already have a zlib we want to use that for the
       # other purposes (binutils and top-level pkgs) too.
-      inherit (prevStage) gettext gnum4 bison gmp perl texinfo zlib linuxHeaders libidn2 libunistring;
+      inherit (prevStage) gettext gnum4 bison gmp perl xz texinfo zlib linuxHeaders libidn2 libunistring;
       ${localSystem.libc} = getLibc prevStage;
       binutils = super.binutils.override {
         # Don't use stdenv's shell but our own

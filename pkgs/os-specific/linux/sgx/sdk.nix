@@ -60,8 +60,9 @@ let
     installPhase = ''
       runHook preInstall
       ./linux/installer/bin/sgx_linux_x64_sdk_*.bin --prefix="$out/share"
-      mv $out/share/sgxsdk/{bin,include,pkgconfig} -t $out
+      mv $out/share/sgxsdk/{bin,include} -t $out
       mv $out/share/sgxsdk/lib64 -T $out/lib
+      mv $out/share/sgxsdk/pkgconfig -t $out/lib
       ln -s lib $out/lib64
       rm -r $out/share/sgxsdk/{sdk_libs,uninstall.sh}
       ln -s ../../{bin,include,lib,lib64} -t $out/share/sgxsdk

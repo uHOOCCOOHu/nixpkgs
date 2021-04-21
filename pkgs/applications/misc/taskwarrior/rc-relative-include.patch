@@ -1,0 +1,108 @@
+diff --git a/doc/man/task-color.5.in b/doc/man/task-color.5.in
+index da0f597b2..f73be389d 100644
+--- a/doc/man/task-color.5.in
++++ b/doc/man/task-color.5.in
+@@ -240,7 +240,7 @@ your .taskrc file (note that your installation may use a slightly different path
+ from the example):
+ 
+ .RS
+-include ${CMAKE_INSTALL_PREFIX}/${TASK_RCDIR}/dark-256.theme
++include dark-256.theme
+ .RE
+ 
+ You can use any of the standard Taskwarrior themes:
+diff --git a/doc/man/taskrc.5.in b/doc/man/taskrc.5.in
+index b69042a26..959b27ced 100644
+--- a/doc/man/taskrc.5.in
++++ b/doc/man/taskrc.5.in
+@@ -144,9 +144,9 @@ ones containing just the relevant configuration data like colors, etc.
+ There are two excellent uses of includes in your .taskrc, shown here:
+ 
+ .RS
+-include ${CMAKE_INSTALL_PREFIX}/${TASK_RCDIR}/holidays.en-US.rc
++include holidays.en-US.rc
+ .br
+-include ${CMAKE_INSTALL_PREFIX}/${TASK_RCDIR}/dark-16.theme
++include dark-16.theme
+ .RE
+ 
+ This includes two standard files that are distributed with Taskwarrior, which
+@@ -781,7 +781,7 @@ be included like this:
+ .RS
+ .RS
+ .br
+-include ${CMAKE_INSTALL_PREFIX}/${TASK_RCDIR}/holidays.en-US.rc
++include holidays.en-US.rc
+ .RE
+ .RE
+ 
+diff --git a/src/Context.cpp b/src/Context.cpp
+index 0c444d7af..1cc0f0b37 100644
+--- a/src/Context.cpp
++++ b/src/Context.cpp
+@@ -1118,20 +1118,20 @@ void Context::createDefaultConfig ()
+              << configurationDefaults.substr (0, loc + 14)
+              << data_dir._original
+              << "\n\n# Color theme (uncomment one to use)\n"
+-             << "#include " << TASK_RCDIR << "/light-16.theme\n"
+-             << "#include " << TASK_RCDIR << "/light-256.theme\n"
+-             << "#include " << TASK_RCDIR << "/dark-16.theme\n"
+-             << "#include " << TASK_RCDIR << "/dark-256.theme\n"
+-             << "#include " << TASK_RCDIR << "/dark-red-256.theme\n"
+-             << "#include " << TASK_RCDIR << "/dark-green-256.theme\n"
+-             << "#include " << TASK_RCDIR << "/dark-blue-256.theme\n"
+-             << "#include " << TASK_RCDIR << "/dark-violets-256.theme\n"
+-             << "#include " << TASK_RCDIR << "/dark-yellow-green.theme\n"
+-             << "#include " << TASK_RCDIR << "/dark-gray-256.theme\n"
+-             << "#include " << TASK_RCDIR << "/dark-gray-blue-256.theme\n"
+-             << "#include " << TASK_RCDIR << "/solarized-dark-256.theme\n"
+-             << "#include " << TASK_RCDIR << "/solarized-light-256.theme\n"
+-             << "#include " << TASK_RCDIR << "/no-color.theme\n"
++             << "#include light-16.theme\n"
++             << "#include light-256.theme\n"
++             << "#include dark-16.theme\n"
++             << "#include dark-256.theme\n"
++             << "#include dark-red-256.theme\n"
++             << "#include dark-green-256.theme\n"
++             << "#include dark-blue-256.theme\n"
++             << "#include dark-violets-256.theme\n"
++             << "#include dark-yellow-green.theme\n"
++             << "#include dark-gray-256.theme\n"
++             << "#include dark-gray-blue-256.theme\n"
++             << "#include solarized-dark-256.theme\n"
++             << "#include solarized-light-256.theme\n"
++             << "#include no-color.theme\n"
+              << '\n';
+ 
+     // Write out the new file.
+Submodule src/libshared contains modified content
+diff --git a/src/libshared/src/Configuration.cpp b/src/libshared/src/Configuration.cpp
+index 9be6de1..405868d 100644
+--- a/src/libshared/src/Configuration.cpp
++++ b/src/libshared/src/Configuration.cpp
+@@ -190,16 +190,16 @@ void Configuration::parse (const std::string& input, int nest /* = 1 */)
+         auto include = line.find ("include");
+         if (include != std::string::npos)
+         {
+-          Path included (trim (line.substr (include + 7)));
+-          if (included.is_absolute ())
+-          {
+-            if (included.readable ())
+-              load (included, nest + 1);
+-            else
+-              throw format ("Could not read include file '{1}'.", included._data);
+-          }
++          std::string path (trim (line.substr (include + 7)));
++          Path included;
++          if (!path.empty () && path[0] == '/')
++            included = path;
+           else
+-            throw format ("Can only include files with absolute paths, not '{1}'", included._data);
++            included = "@rc_path@/" + path;
++          if (included.readable ())
++            load (included, nest + 1);
++          else
++            throw format ("Could not read include file '{1}'.", included._data);
+         }
+         else
+           throw format ("Malformed entry '{1}' in config file.", line);

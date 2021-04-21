@@ -1,24 +1,28 @@
-{ lib, stdenv, fetchurl, cmake, libuuid, gnutls, python3, bash }:
+{ lib, stdenv, fetchFromGitHub, cmake, libuuid, gnutls, python3, bash }:
 
 stdenv.mkDerivation rec {
   pname = "taskwarrior";
   version = "2.5.3";
 
-  srcs = [
-    (fetchurl {
-      url = " https://github.com/GothenburgBitFactory/taskwarrior/releases/download/v${version}/${sourceRoot}.tar.gz";
-      sha256 = "0fwnxshhlha21hlgg5z1ad01w13zm1hlmncs274y5n8i15gdfhvj";
-    })
-    (fetchurl {
-      url = "https://github.com/GothenburgBitFactory/taskwarrior/releases/download/v${version}/tests-${version}.tar.gz";
-      sha256 = "165xmf9h6rb7l6l9nlyygj0mx9bi1zyd78z0lrl3nadhmgzggv0b";
-    })
+  src = fetchFromGitHub {
+    owner = "GothenburgBitFactory";
+    repo = "taskwarrior";
+    rev = "v${version}";
+    sha256 = "sha256-XiXU2bHjSbrRNIR7GBhUBQw9rWtbRxkEw4d6fmd2cQs=";
+    fetchSubmodules = true;
+  };
+
+  patches = [
+    # Make it deterministic.
+    ./remove-date-time.patch
+    # Do not use absolute path in config files, which will be invalidated
+    # after an upgrade. It's an temporary fixup.
+    # Issue: https://github.com/GothenburgBitFactory/taskwarrior/issues/1847
+    ./rc-relative-include.patch
   ];
-
-  sourceRoot = "task-${version}";
-
-  postUnpack = ''
-    mv test ${sourceRoot}
+  postPatch = ''
+    substituteInPlace "src/libshared/src/Configuration.cpp" \
+      --replace "@rc_path@" "$out/share/doc/task/rc"
   '';
 
   nativeBuildInputs = [ cmake libuuid gnutls ];
@@ -45,7 +49,7 @@ stdenv.mkDerivation rec {
     description = "Highly flexible command-line tool to manage TODO lists";
     homepage = "https://taskwarrior.org";
     license = licenses.mit;
-    maintainers = with maintainers; [ marcweber ];
+    maintainers = with maintainers; [ marcweber oxalica ];
     platforms = platforms.unix;
   };
 }

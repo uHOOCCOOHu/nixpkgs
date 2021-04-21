@@ -1,0 +1,13 @@
+diff --git a/src/commands/CmdDiagnostics.cpp b/src/commands/CmdDiagnostics.cpp
+index a2b2435c1..bedac33a0 100644
+--- a/src/commands/CmdDiagnostics.cpp
++++ b/src/commands/CmdDiagnostics.cpp
+@@ -123,7 +123,6 @@ int CmdDiagnostics::execute (std::string& output)
+       << '\n'
+ 
+   // Build date.
+-      << "      Built: " << __DATE__ << ' ' << __TIME__ << '\n'
+ #ifdef HAVE_COMMIT
+       << "     Commit: " << COMMIT << '\n'
+ #endif
+

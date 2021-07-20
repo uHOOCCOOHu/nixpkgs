@@ -17134,8 +17134,6 @@ in
 
   libtap = callPackage ../development/libraries/libtap { };
 
-  libtgvoip = callPackage ../development/libraries/libtgvoip { };
-
   libtsm = callPackage ../development/libraries/libtsm { };
 
   libgeotiff = callPackage ../development/libraries/libgeotiff { };

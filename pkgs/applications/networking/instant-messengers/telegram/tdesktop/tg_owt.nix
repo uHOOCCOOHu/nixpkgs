@@ -1,9 +1,9 @@
 { lib, stdenv, fetchFromGitHub, fetchpatch
 , pkg-config, cmake, ninja, yasm
 , libjpeg, openssl, libopus, ffmpeg, alsa-lib, libpulseaudio, protobuf
-, xorg, libXtst, libXcomposite, libXdamage, libXext, libXrender, libXrandr
+, openh264, usrsctp, libevent, libvpx
 , glib, abseil-cpp, pcre, util-linuxMinimal, libselinux, libsepol, pipewire
-, libXi
+, xorg, libX11, libXtst, libXcomposite, libXdamage, libXext, libXrender, libXrandr, libXi
 }:
 
 stdenv.mkDerivation {
@@ -24,15 +24,15 @@ stdenv.mkDerivation {
 
   buildInputs = [
     libjpeg openssl libopus ffmpeg alsa-lib libpulseaudio protobuf
-    xorg.libX11 libXtst libXcomposite libXdamage libXext libXrender libXrandr
+    openh264 usrsctp libevent libvpx
+    libX11 libXtst libXcomposite libXdamage libXext libXrender libXrandr libXi
     glib abseil-cpp pcre util-linuxMinimal libselinux libsepol pipewire
-    libXi
   ];
 
-  cmakeFlags = [
-    # Building as a shared library isn't officially supported and currently broken:
-    "-DBUILD_SHARED_LIBS=OFF"
-  ];
+  propagatedBuildInputs = [ abseil-cpp ];
 
-  meta.license = lib.licenses.bsd3;
+  meta = with lib; {
+    license = licenses.bsd3;
+    maintainers = with maintainers; [ oxalica ];
+  };
 }

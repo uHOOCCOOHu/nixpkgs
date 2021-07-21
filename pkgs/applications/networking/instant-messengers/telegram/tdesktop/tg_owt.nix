@@ -29,7 +29,15 @@ stdenv.mkDerivation {
     glib abseil-cpp pcre util-linuxMinimal libselinux libsepol pipewire
   ];
 
-  propagatedBuildInputs = [ abseil-cpp ];
+  cmakeFlags = [
+    # Building as a shared library isn't officially supported and may break at any time.
+    "-DBUILD_SHARED_LIBS=OFF"
+  ];
+
+  propagatedBuildInputs = [
+    # Required for linking downstream binaries.
+    abseil-cpp openh264 usrsctp libevent libvpx
+  ];
 
   meta = with lib; {
     license = licenses.bsd3;

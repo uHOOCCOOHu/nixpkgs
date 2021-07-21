@@ -52,16 +52,20 @@ in mkDerivation rec {
   dontWrapGApps = true;
   dontWrapQtApps = true;
 
-  nativeBuildInputs = [ pkg-config cmake ninja python3 wrapGAppsHook wrapQtAppsHook removeReferencesTo ];
+  nativeBuildInputs = [
+    pkg-config cmake ninja python3 wrapGAppsHook wrapQtAppsHook removeReferencesTo
+    extra-cmake-modules
+  ];
 
   buildInputs = [
     qtbase qtimageformats gtk3 libsForQt5.kwayland libsForQt5.libdbusmenu lz4 xxHash
     ffmpeg openalSoft minizip libopus alsa-lib libpulseaudio range-v3
     tl-expected hunspell glibmm webkitgtk jemalloc
-    rnnoise extra-cmake-modules
+    rnnoise
     tg_owt
     # Transitive dependencies:
-    pcre xorg.libpthreadstubs xorg.libXdmcp util-linux libselinux libsepol epoxy
+    util-linux # Required for libmount thus not nativeBuildInputs.
+    pcre xorg.libpthreadstubs xorg.libXdmcp libselinux libsepol epoxy
     at-spi2-core libXtst libthai libdatrie libsysprof-capture libpsl brotli
   ];
 
@@ -112,7 +116,7 @@ in mkDerivation rec {
       Desktop client for the Telegram messenger, based on the Telegram API and
       the MTProto secure protocol.
     '';
-    license = licenses.gpl3;
+    license = licenses.gpl3Only;
     platforms = platforms.linux;
     homepage = "https://desktop.telegram.org/";
     changelog = "https://github.com/telegramdesktop/tdesktop/releases/tag/v${version}";

@@ -1,11 +1,11 @@
 { mkDerivation, lib, fetchFromGitHub, callPackage, fetchpatch
-, pkg-config, cmake, ninja, python3, wrapGAppsHook, wrapQtAppsHook, removeReferencesTo
+, pkg-config, cmake, ninja, python3, wrapGAppsHook, wrapQtAppsHook
 , qtbase, qtimageformats, gtk3, libsForQt5, lz4, xxHash
 , ffmpeg, openalSoft, minizip, libopus, alsa-lib, libpulseaudio, range-v3
 , tl-expected, hunspell, glibmm, webkitgtk, jemalloc
 , rnnoise, extra-cmake-modules
 # Transitive dependencies:
-, pcre, xorg, util-linux, libselinux, libsepol, epoxy
+, pcre, xorg, util-linuxMinimal, libselinux, libsepol, epoxy
 , at-spi2-core, libXtst, libthai, libdatrie
 , xdg-utils, libsysprof-capture, libpsl, brotli
 }:
@@ -53,7 +53,7 @@ in mkDerivation rec {
   dontWrapQtApps = true;
 
   nativeBuildInputs = [
-    pkg-config cmake ninja python3 wrapGAppsHook wrapQtAppsHook removeReferencesTo
+    pkg-config cmake ninja python3 wrapGAppsHook wrapQtAppsHook
     extra-cmake-modules
   ];
 
@@ -64,7 +64,7 @@ in mkDerivation rec {
     rnnoise
     tg_owt
     # Transitive dependencies:
-    util-linux # Required for libmount thus not nativeBuildInputs.
+    util-linuxMinimal # Required for libmount thus not nativeBuildInputs.
     pcre xorg.libpthreadstubs xorg.libXdmcp libselinux libsepol epoxy
     at-spi2-core libXtst libthai libdatrie libsysprof-capture libpsl brotli
   ];
@@ -74,18 +74,15 @@ in mkDerivation rec {
     # We're allowed to used the API ID of the Snap package:
     "-DTDESKTOP_API_ID=611335"
     "-DTDESKTOP_API_HASH=d524b414d21f4d37f08684c1df41ac9c"
-    "-DTDESKTOP_LAUNCHER_BASENAME=telegramdesktop" # Note: This is the default
   ];
 
   # Note: The following packages could be packaged system-wide, but it's
   # probably best to use the bundled ones from tdesktop (Arch does this too):
   # rlottie:
-  # - CMake flag: "-DTDESKTOP_USE_PACKAGED_TGVOIP=ON"
   # - Sources (problem: there are no stable releases!):
   #   - desktop-app (tdesktop): https://github.com/desktop-app/rlottie
   #   - upstream: https://github.com/Samsung/rlottie
   # libtgvoip:
-  # - CMake flag: "-DDESKTOP_APP_USE_PACKAGED_RLOTTIE=ON"
   # - Sources  (problem: the stable releases might be too old!):
   #   - tdesktop: https://github.com/telegramdesktop/libtgvoip
   #   - upstream: https://github.com/grishka/libtgvoip
@@ -100,6 +97,7 @@ in mkDerivation rec {
       "''${gappsWrapperArgs[@]}" \
       "''${qtWrapperArgs[@]}" \
       --prefix PATH : ${xdg-utils}/bin \
+      --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ alsa-lib libpulseaudio ]} \
       --set XDG_RUNTIME_DIR "XDG-RUNTIME-DIR"
     sed -i $out/bin/telegram-desktop \
       -e "s,'XDG-RUNTIME-DIR',\"\''${XDG_RUNTIME_DIR:-/run/user/\$(id --user)}\","
